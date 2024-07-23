@@ -19,7 +19,7 @@ if __name__ == '__main__':
     admm = Admm(args)
     
     time_start=time.perf_counter()
-    target, target_ph, probe_re = admm.compute('various_PIE') # 重建
+    target, target_ph, probe_re = admm.compute('T_ADMM') # 重建
     time_end =time.perf_counter()
     time_consume=time_end-time_start
     print("time consume ", time_consume)
