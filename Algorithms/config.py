@@ -8,7 +8,7 @@ def config():
     # configuration for PIG
     cfg = AttrDict()
 
-    cfg.sigma = 1.0
+    cfg.sigma = 1
     #########参数设置#########
     cfg.lamda = 632.8e-6     #wavelength 637
     cfg.z2 = 31   #propagate_distance 10.77

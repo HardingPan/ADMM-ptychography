@@ -1,31 +1,28 @@
 import numpy as np
-from numpy import fft
+from numpy import  fft
 import cv2
-import matplotlib.pyplot as plt
-
-import sys
-sys.path.append("Algorithms")
-from util import lowPassFilter
 from util.Setpinhole import Setpinhole
-from util.center_find import center_find2
-from util.random_sampling import random_sampling
-from util.Normlize import Normlize
+import matplotlib.pyplot as plt
 from Algorithms import WF, ADMM_Py
-from Algorithms.various_PIE_engine import *
-
 import copy
+from util.center_find import center_find2
 import random
-import  time
 
-def imcrop(image,pixsum=100):
+from  util import lowPassFilter
+import  time
+from  util.random_sampling import random_sampling
+from util.Normlize import Normlize
+from Algorithms import  ADMM_Py
+from Algorithms.various_PIE_engine import *
+sigma = 1
+
+def imcrop(image, pixsum=100):
     [row, col] = np.shape(image)
     x_center = col // 2
     y_center = row // 2
     abstract = image[(y_center - pixsum // 2) : (y_center + pixsum // 2),
-                (x_center - pixsum // 2): (x_center + pixsum // 2)]
+                     (x_center - pixsum // 2): (x_center + pixsum // 2)]
     return abstract
-
-sigma = 1
 
 #########参数设置#########
 lamda = 632.8e-6     #wavelength 637
@@ -52,7 +49,7 @@ positions = copy.deepcopy(positions1)
 print(positions)
 # diffset = getphotos('C:/Users/86364/Desktop/yanshetuxiang/yanshetuxiang')
 diffset = np.load("../data/diffset_test.npy")
-backnoise  = cv2.imread("../data/backnoise.tiff", cv2.IMREAD_ANYDEPTH)
+backnoise  = cv2.imread("../data/backnoise.tiff",cv2.IMREAD_ANYDEPTH)
 
 for i in range(len(diffset)):
 
@@ -116,8 +113,9 @@ object_re1, probe_re1, err=various_PIE(k, diffsets, probe_r, object_re_shape, po
 # object_re5, probe_re5, err=various_PIE(k, diffsets, probe_r, object_re_shape, positions, illuindy, illuindx,'Fourier',z2,lamda,pix,'rPIE',object,lis)
 # object_re4, probe_re4, err_=WF.ADMM(k, diffsets, probe_r, object_re_shape, positions, illuindy, illuindx,'Fourier',z2,lamda,pix,object,lis)
 # object_re4, probe_re4, err_=WF.L_ADMM(k, diffsets, probe_r, object_re_shape, positions, illuindy, illuindx,'Fourier',z2,lamda,pix,object,lis)
-object_re5, probe_re5, err= WF.T_ADMM(k, diffsets, probe_r, object_re_shape, positions, illuindy, illuindx, 'Fourier', z2, lamda, pix, object, lis, is_center_correct = 1)
+# object_re5, probe_re5, err= WF.T_ADMM(k, diffsets, probe_r, object_re_shape, positions, illuindy, illuindx, 'Fourier', z2, lamda, pix, object, lis, is_center_correct = 1)
 # object_re6,probe_re6, err= ADMM_Py.ADMM_net_denoise(k, diffsets, probe_r, object_re_shape, positions, illuindy, illuindx, 'Fourier', z2, lamda, pix, object, lis)
+
 time_end =time.perf_counter()
 time_consume=time_end-time_start
 print("time consume ", time_consume)
@@ -133,79 +131,18 @@ object1_ph = np.angle(object_re1)
 object1_ph = cv2.rotate(object1_ph , cv2.ROTATE_90_CLOCKWISE)
 object1 = cv2.rotate(object1, cv2.ROTATE_90_CLOCKWISE)
 
-# object2 = abs(object_re2) / np.max(abs(object_re1))
-# object2_ph = np.angle(object_re2)
-# object2_ph = cv2.rotate(object2_ph , cv2.ROTATE_90_CLOCKWISE)
-# object2 = cv2.rotate(object2, cv2.ROTATE_90_CLOCKWISE)
-#
-# object3 = abs(object_re3) / np.max(abs(object_re3))
-# object3_ph = np.angle(object_re3)
-# object3_ph = cv2.rotate(object3_ph , cv2.ROTATE_90_CLOCKWISE)
-# object3 = cv2.rotate(object3, cv2.ROTATE_90_CLOCKWISE)
-#
-# object4 = abs(object_re4) / np.max(abs(object_re4))
-# object4_ph = np.angle(object_re4)
-# object4_ph = cv2.rotate(object4_ph , cv2.ROTATE_90_CLOCKWISE)
-# object4 = cv2.rotate(object4, cv2.ROTATE_90_CLOCKWISE)
-# #
-object5 = abs(object_re5) / np.max(abs(object_re5))
-object5_ph = np.angle(object_re5)
-object5_ph = cv2.rotate(object5_ph , cv2.ROTATE_90_CLOCKWISE)
-object5 = cv2.rotate(object5, cv2.ROTATE_90_CLOCKWISE)
-# #
-# object6 = abs(object_re6) / np.max(abs(object_re6))
-# object6_ph = np.angle(object_re6)
-# object6_ph = cv2.rotate(object6_ph , cv2.ROTATE_90_CLOCKWISE)
-# object6 = cv2.rotate(object6, cv2.ROTATE_90_CLOCKWISE)
 
-
-# cv2.imwrite("C:/Users/86364/Desktop/OL/experiment/USAF/40/ePIE_am.png",Normlize(object1,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/OL/experiment/USAF/40/ePIE_ph.png",Normlize(object1_ph,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/OL/experiment/USAF/40/ePIE_pr.png",Normlize(np.abs(probe_re1),0,255))
-#
-# cv2.imwrite("C:/Users/86364/Desktop/OL/experiment/USAF/40/rPIE_am.png",Normlize(object2,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/OL/experiment/USAF/40/rPIE_ph.png",Normlize(object2_ph,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/OL/experiment/USAF/40/rPIE_pr.png",Normlize(np.abs(probe_re2),0,255))
-#
-# cv2.imwrite("C:/Users/86364/Desktop/OL/experiment/USAF/40/ADMM_am.png",Normlize(object3,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/OL/experiment/USAF/40/ADMM_ph.png",Normlize(object3_ph,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/OL/experiment/USAF/40/ADMM_pr.png",Normlize(np.abs(probe_re3),0,255))
-#
-#
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/ADMM_am.png",Normlize(object4,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/ADMM_ph.png",Normlize(object4_ph,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/ADMM_pr.png",Normlize(np.abs(probe_re4),0,255))
-#
-#
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/ADMM_am_z.png",Normlize(object4[140:245,200:290],0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/ADMM_ph_z.png",Normlize(object4_ph[140:245,200:290],0,255))
-# ##
-#
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_am.png",Normlize(object5,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_ph.png",Normlize(object5_ph,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_pr_am.png",Normlize(np.abs(probe_re5),0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_pr_ph.png",Normlize(np.angle(probe_re5),0,255))
 # #
-#
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_am_z.png",Normlize(object5[145:245,195:290],0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_ph_z.png",Normlize(object5_ph[145:245,195:290],0,255))
-# # #
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_am_net.png",Normlize(object6,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_ph_net.png",Normlize(object6_ph,0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_pr_net.png",Normlize(np.abs(probe_re6),0,255))
-#
-#
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_am_net_z.png",Normlize(object6[145:245,195:290],0,255))
-# cv2.imwrite("C:/Users/86364/Desktop/biyelunwen/image/4part/shiyan/T_ADMM_ph_net_z.png",Normlize(object6_ph[145:245,195:290],0,255))
+# object5 = abs(object_re5) / np.max(abs(object_re5))
+# object5_ph = np.angle(object_re5)
+# object5_ph = cv2.rotate(object5_ph , cv2.ROTATE_90_CLOCKWISE)
+# object5 = cv2.rotate(object5, cv2.ROTATE_90_CLOCKWISE)
 
-# plt.savefig('C:/Users/86364/Desktop/OL/experiment/USAF/40/R_factor.png', dpi= 1000, bbox_inches ='tight')
-fig, ax = plt.subplots(2, 2, gridspec_kw={ 'wspace': 0 , 'hspace':0.5}); plt.suptitle('object and probe reconstruction')
-ax = ax.flatten()
-ax0=ax[0].imshow(abs(object5) , cmap='gray'); ax[0].set_title('object amplitude')
-ax1=ax[1].imshow(object5_ph, cmap='gray'); ax[1].set_title('object phase ')
-ax[2].imshow(np.abs(probe_re5), cmap='jet'); ax[2].set_title('probe amplitude')
-ax[3].imshow(np.angle(probe_re5), cmap='jet'); ax[3].set_title('probe phase')
-fig.colorbar(ax0,ax = ax[0]);fig.colorbar(ax1,ax = ax[1])
+# ax0=ax[0].imshow(abs(object5) , cmap='gray'); ax[0].set_title('object amplitude')
+# ax1=ax[1].imshow(object5_ph, cmap='gray'); ax[1].set_title('object phase ')
+# ax[2].imshow(np.abs(probe_re5), cmap='jet'); ax[2].set_title('probe amplitude')
+# ax[3].imshow(np.angle(probe_re5), cmap='jet'); ax[3].set_title('probe phase')
+# fig.colorbar(ax0,ax = ax[0]);fig.colorbar(ax1,ax = ax[1])
 
 fig, ax = plt.subplots(2, 2, gridspec_kw={ 'wspace': 0 , 'hspace':0.5}); plt.suptitle('object and probe reconstruction')
 ax = ax.flatten()
