@@ -674,7 +674,7 @@ def rwf_mean(n, diffSet, probe, objectSize, positions, illu_indy, illu_indx, typ
     return objectFunc, probe, err_3[-1]
 
 
-def  ADMM(n, diffSet, probe, objectSize, positions, illu_indy, illu_indx, type, z, wavelength, pix, object, lis, is_center_correct):
+def ADMM(n, diffSet, probe, objectSize, positions, illu_indy, illu_indx, type, z, wavelength, pix, object, lis, is_center_correct):
     ysize, xsize = probe.shape
     objectFunc = np.ones(objectSize, dtype=np.complex64)
 
@@ -792,6 +792,7 @@ def  ADMM(n, diffSet, probe, objectSize, positions, illu_indy, illu_indx, type, 
     plt.legend(loc=3, prop={'size': 9})
     plt.xlabel('iteration number')
     plt.ylabel('relative error')
+    plt.savefig('admm_loss.png', dpi=300)
     print(err_2[-1], err_3[-1])
     # End of iterations
     print('End of iterations')
@@ -926,6 +927,7 @@ def L_ADMM(n, diffSet, probe, objectSize, positions, illu_indy, illu_indx, type,
     plt.legend(loc=3, prop={'size': 9})
     plt.xlabel('iteration number')
     plt.ylabel('relative error')
+    plt.savefig('l_admm_loss.png', dpi=300)
     print(err_2[-1],err_3[-1])
     # End of iterations
     print('End of iterations')
@@ -1057,6 +1059,7 @@ def T_ADMM(n, diffSet, probe, objectSize, positions, illu_indy, illu_indx, type,
     plt.legend(loc=3, prop={'size': 9})
     plt.xlabel('iteration number')
     plt.ylabel('relative error')
+    plt.savefig('t_admm_loss.png', dpi=300)
     print(err_2[-1],err_3[-1])
     # End of iterations
     print('End of iterations')

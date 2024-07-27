@@ -14,7 +14,7 @@ from util import lowPassFilter
 from util.center_find import center_find2
 from util.Setpinhole import Setpinhole
 from Algorithms.various_PIE_engine import *
-from WF import T_ADMM
+from WF import *
 
 def denoise(diffset, backnoise):
     for i in range(len(diffset)):
@@ -77,6 +77,15 @@ class VariousPIEMethod(ComputeMethod):
                                    cfg['pix'], 'rPIE', image_target, lis)
         return target_re, probe_re, err
 
+# 'ADMM'
+class ADMMMethod(ComputeMethod):
+    def compute(self, cfg, diffsets, probe_r, target_size, positions, 
+                illuindy, illuindx, image_target, lis):
+        target_re, probe_re, err = ADMM(cfg['k'], diffsets, probe_r, target_size, positions, 
+                                   illuindy, illuindx, 'Fourier', cfg['z2'], cfg['lamda'], 
+                                   cfg['pix'], image_target, lis, is_center_correct=1)
+        return target_re, probe_re, err
+    
 # 'T_ADMM'
 class TADMMMethod(ComputeMethod):
     def compute(self, cfg, diffsets, probe_r, target_size, positions, 
@@ -85,6 +94,22 @@ class TADMMMethod(ComputeMethod):
                                    illuindy, illuindx, 'Fourier', cfg['z2'], cfg['lamda'], 
                                    cfg['pix'], image_target, lis, is_center_correct=1)
         return target_re, probe_re, err
+    
+# 'L_ADMM'
+class LADMMMethod(ComputeMethod):
+    def compute(self, cfg, diffsets, probe_r, target_size, positions, 
+                illuindy, illuindx, image_target, lis):
+        target_re, probe_re, err = L_ADMM(cfg['k'], diffsets, probe_r, target_size, positions, 
+                                   illuindy, illuindx, 'Fourier', cfg['z2'], cfg['lamda'], 
+                                   cfg['pix'], image_target, lis, is_center_correct=1)
+        return target_re, probe_re, err
+    
+method_dict = {
+    'various_PIE': VariousPIEMethod,
+    'T_ADMM': TADMMMethod,
+    'ADMM': ADMMMethod,
+    'L_ADMM': LADMMMethod
+}
 
 class Admm:
     def __init__(self, args) -> None:
@@ -134,8 +159,6 @@ class Admm:
         计算幅度和相位图像。
     
         输入: 计算的方法名    
-        - various_PIE
-        - T_ADMM
 
         输出:    
         - target: 重构的对象幅度数据
@@ -148,10 +171,8 @@ class Admm:
         random.shuffle(lis)
 
         # 选择计算方法
-        if method_name == 'various_PIE':
-            self.compute_method = VariousPIEMethod()
-        elif method_name == 'T_ADMM':
-            self.compute_method = TADMMMethod()
+        if method_name in method_dict:
+            self.compute_method = method_dict[method_name]()
         else:
             raise ValueError(f"Unknown method: {method_name}")
 
@@ -165,4 +186,4 @@ class Admm:
         target_ph = cv2.rotate(target_ph , cv2.ROTATE_90_CLOCKWISE)
         target = cv2.rotate(target, cv2.ROTATE_90_CLOCKWISE)
 
-        return target, target_ph, probe_re
+        return target, target_ph, probe_re, err
